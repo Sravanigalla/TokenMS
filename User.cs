@@ -3,7 +3,7 @@
     public class User
     {
 
-        public string Username { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty; // username propertys
 
 
         public byte[]? PasswordHash { get; set; }
