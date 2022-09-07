@@ -6,7 +6,7 @@
         public string Username { get; set; } = string.Empty; // username propertys
 
 
-        public byte[]? PasswordHash { get; set; }
+        public byte[]? PasswordHash { get; set; } // passwordhash
         public byte[]? PasswordSalt { get;  set; }
 
       
