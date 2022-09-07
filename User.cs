@@ -7,7 +7,7 @@
 
 
         public byte[]? PasswordHash { get; set; } // passwordhash
-        public byte[]? PasswordSalt { get;  set; }
+        public byte[]? PasswordSalt { get;  set; } // password salt
 
       
 
