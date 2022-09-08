@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Ecommerces_MS.Service;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,10 +16,21 @@ namespace Ecommerces_MS.Controllers
         public static User user = new User();
         
         private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration , IUserService userService)
         {
             _configuration = configuration;
+            _userService = userService;
+        }
+
+        [HttpGet , Authorize]
+
+        public ActionResult<string> GetMe()
+        {
+            var Username = _userService.GetUserName();
+            
+            return Ok(Username);
         }
 
         [HttpPost("register")]
@@ -32,6 +45,8 @@ namespace Ecommerces_MS.Controllers
              return Ok(user);
 
         }
+
+
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(UserRegister request) {
 
@@ -52,12 +67,12 @@ namespace Ecommerces_MS.Controllers
             };
 
     var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
-    var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
     var token = new JwtSecurityToken(
         claims: claims,
-        expires: DateTime.Now.AddDays(1),
-        signingCredentials: cred
+        expires: DateTime.Now.AddMinutes(1),
+        signingCredentials: creds
         );
 
     var jwt = new JwtSecurityTokenHandler().WriteToken(token);
