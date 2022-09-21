@@ -1,4 +1,6 @@
-﻿using Ecommerces_MS.Service;
+﻿using Ecommerces_MS.Models;
+using Ecommerces_MS.Repository;
+using Ecommerces_MS.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,14 +19,41 @@ namespace Ecommerces_MS.Controllers
         
         private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
+        private readonly UserdbContext _dbContext;
+        private readonly IRepo _repo;
 
-        public AuthController(IConfiguration configuration , IUserService userService)
+        public AuthController(IConfiguration configuration , IUserService userService, UserdbContext db , IRepo r)
         {
             _configuration = configuration;
             _userService = userService;
+            _dbContext = db;
+            _repo = r;
         }
 
-        [HttpGet , Authorize]
+        [HttpPost]
+        [Route("register")]
+
+        public IActionResult Signup([FromBody] UserRegister reg)
+        {
+            _dbContext.BuildConnectionString(_configuration.GetConnectionString("registerConn"));
+            var status = _repo.createCustomers(reg);
+
+            if (status == "OK")
+            {
+                return Ok(new { message = "customer created successfully!" });
+            }
+            else
+            {
+                return StatusCode(429, status);
+            }
+        }
+
+
+    }
+}
+
+
+/*[HttpGet , Authorize]
 
         public ActionResult<string> GetMe()
         {
@@ -86,7 +115,4 @@ private void CreatePasswordHash(string password, out byte[] passwordHash, out by
         passwordSalt = hmac.Key;
         passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
     }
-}
-        }
-       
-    }
+}*/

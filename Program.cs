@@ -1,5 +1,8 @@
+using Ecommerces_MS.Models;
+using Ecommerces_MS.Repository;
 using Ecommerces_MS.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -7,6 +10,11 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IRepo, Repo>();
+
+builder.Services.AddDbContext<UserdbContext>(opt =>
+opt.UseSqlServer(builder.Configuration.GetConnectionString("registerConn")));
 
 
 builder.Services.AddControllers();
